@@ -1,20 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground } from 'react-native';
+
+import InicioSesion from './componentes/InicioSesion';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <ImageBackground source={require('./assets/pantInicioSesion.png')} style={styles.backgroundImage}>
+      <View style={styles.container}>
+      <InicioSesion />
       <StatusBar style="auto" />
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    //backgroundColor: '#AEC8D8',
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Opcional: puedes ajustar el modo de ajuste de la imagen de fondo
+    justifyContent: 'center',
+  },
+  
 });
