@@ -1,7 +1,15 @@
 import React from "react";
-import { ImageBackground, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, Linking } from "react-native";
 
 const DetalleTransaccion = () => {
+
+    const llamar = () => {
+        const folio = '123456'; { /* cambiar cuando recibamos info */}
+        const num = 'tel:+525587596904';
+        Linking.openURL(num)
+            .catch(err => console.error('An error occurred', err));
+    };
+
     return (
         <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
             <View style={styles.container}>
@@ -27,11 +35,9 @@ const DetalleTransaccion = () => {
                     <Text style={styles.detalle}>Normal</Text>
                 </View>
 
-
-                <TouchableOpacity style={styles.boton}>
+                <TouchableOpacity style={styles.boton} onPress={llamar}>
                     <Text style={styles.textoBoton}>No reconozco este movimiento</Text>
                 </TouchableOpacity>
-
 
             </View>
 
@@ -106,7 +112,6 @@ const styles = StyleSheet.create ({
         paddingHorizontal: 30,
         alignItems: 'center',
         marginBottom: 30,
-
     },
     textoBoton: {
         color: 'white',
