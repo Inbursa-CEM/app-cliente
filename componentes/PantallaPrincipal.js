@@ -20,7 +20,7 @@ const PantallaPrincipal = () => {
           </View>
 
           <View style={[styles.subContainer, styles.border]}>
-            <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Cuentas bancarias</Text>
+            <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Cuenta bancaria</Text>
             <View style={styles.transaccion}>
               <View>
                 <Text style={styles.textMediano}>Terminación</Text>
@@ -29,16 +29,6 @@ const PantallaPrincipal = () => {
               <View style={styles.right}>
                 <Text style={styles.textMediano}>Saldo disponible</Text>
                 <Text style={styles.textCantidadCuenta}>$30,000</Text>
-              </View>
-            </View>
-            <View style={styles.transaccion}>
-              <View>
-                <Text style={styles.textMediano}>Terminación</Text>
-                <Text style={styles.textCantidadCuenta}>*67890</Text>
-              </View>
-              <View style={styles.right}>
-                <Text style={styles.textMediano}>Saldo disponible</Text>
-                <Text style={styles.textCantidadCuenta}>$10,000</Text>
               </View>
             </View>
           </View>
@@ -117,13 +107,13 @@ const styles = StyleSheet.create({
   },
   contenedorPrincipal: {
     width: '90%',
-    marginTop: 22
+    marginTop: 27
   },
   subContainer: {
     backgroundColor: 'rgba(217, 217, 217, 0.42)',
     borderRadius: 10,
     padding: 18,
-    marginBottom: 15
+    marginBottom: 18
   },
   usuario: {
     fontSize: 18,

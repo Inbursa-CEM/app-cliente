@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ImageBackground, StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { ImageBackground, StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
 
 const Transacciones = () => {
 
@@ -41,7 +41,10 @@ const Transacciones = () => {
                 <View style={[styles.subContainer, styles.border, styles.contenedorTransaccciones]}>
                     <ScrollView>
                         {transacciones.map((transaccion, index) => (
-                            <TouchableOpacity key={index} style={[styles.transaccion, index !== transacciones.length -1 && styles.transaccionDivider]}>
+                            <TouchableOpacity 
+                            key={index} 
+                            style={[styles.transaccion, index !== transacciones.length -1 && styles.transaccionDivider]}
+                            onPress={() => navigation.navigate('DetalleTransaccion', {transaccion: transaccion})}>
                                 <View>
                                     <Text style={styles.fechaTransaccion}>{transaccion.fecha}</Text>
                                     <Text style={styles.transaccionDescripcion}>{transaccion.descripcion}</Text>
