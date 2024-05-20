@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert, ImageBackground, Dimensions, StyleSheet} from "react-native";
 import Boton from "./Boton";
+import Logica from "./Logica";
 
 const InicioSesion = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ const InicioSesion = ({ navigation }) => {
   return (
     <ImageBackground source={require('../assets/pantInicioSesion.png')} style={styles.background} resizeMode="cover">
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Logica/>
         <TextInput
           placeholder="Correo electrónico"
           //backgroundColor="white"
