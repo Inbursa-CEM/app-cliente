@@ -12,7 +12,7 @@ const InicioSesion = ({ navigation }) => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://192.168.0.20:8080/cliente/getDatosCliente', {
+      const response = await fetch('http://localhost:8080/cliente/getDatosCliente', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,7 +24,6 @@ const InicioSesion = ({ navigation }) => {
         const data = await response.json();
         await AsyncStorage.setItem('cliente', JSON.stringify(data));
         navigation.navigate('PantallaPrincipal', { cliente: data });
-        onLoginSuccess(data);
       } else {
         const error = await response.json();
         Alert.alert('Error', error.error || 'Error al iniciar sesión');
