@@ -24,6 +24,7 @@ const InicioSesion = ({ navigation }) => {
         const data = await response.json();
         await AsyncStorage.setItem('cliente', JSON.stringify(data));
         navigation.navigate('PantallaPrincipal', { cliente: data });
+        onLoginSuccess(data);
       } else {
         const error = await response.json();
         Alert.alert('Error', error.error || 'Error al iniciar sesión');
