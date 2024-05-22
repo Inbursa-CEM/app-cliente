@@ -12,31 +12,32 @@ const InicioSesion = ({ navigation }) => {
   const handleLogin = async () => {
     setLoading(true);
     setLoginError(null);
-    try {
-      const response = await fetch('http://localhost:8080/cliente/getDatosCliente', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ correo: email, contrasena: password }),
-      });
+    
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correo: email, password: password })
+    };
 
-      if (response.ok) {
-        const data = await response.json();
-        await AsyncStorage.setItem('cliente', JSON.stringify(data));
+    fetch('http://localhost:8080/cliente/getDatosCliente', requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(error => { throw new Error(error.error || 'Error al iniciar sesión'); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        AsyncStorage.setItem('cliente', JSON.stringify(data));
         navigation.navigate('PantallaPrincipal', { cliente: data });
-      } else {
-        const error = await response.json();
-        Alert.alert('Error', error.error || 'Error al iniciar sesión');
-        setLoginError(error.error || 'Error al iniciar sesión');
-      }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      Alert.alert('Error', 'Error al iniciar sesión');
-      setLoginError('Error al iniciar sesión');
-    } finally {
-      setLoading(false);
-    }
+      })
+      .catch(error => {
+        console.error('Error al iniciar sesión:', error);
+        Alert.alert('Error', error.message || 'Error al iniciar sesión');
+        setLoginError(error.message || 'Error al iniciar sesión');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
