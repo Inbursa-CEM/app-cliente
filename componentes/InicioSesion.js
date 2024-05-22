@@ -11,6 +11,7 @@ const InicioSesion = ({ navigation }) => {
 
   const handleLogin = async () => {
     setLoading(true);
+    setLoginError(null);
     try {
       const response = await fetch('http://localhost:8080/cliente/getDatosCliente', {
         method: 'POST',
