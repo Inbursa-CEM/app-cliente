@@ -14,16 +14,24 @@ const PantallaPrincipal = () => {
     const fetchClienteData = async() => {
       const idCliente = await AsyncStorage.getItem('idCliente');
       if (idCliente) {
-        //Cambiar localhost a IP
-        fetch('http://10.48.70.212:8080/cliente/${idCliente}/cuenta/cuentas')
-        .then(response => response.json())
-        .then(data => {
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idCliente: idCliente})
+        };
+
+        try {
+          const response = await fetch('http://10.48.70.212:8080/cuenta/cuentas', requestOptions);
+          const data = await response.json();
+          console.log('data:', data);
+          if (!response.ok) {
+            throw new Error(data.error || 'Error al obtener los datos del cliente en pantalla');
+          }
           setCliente(data.cliente);
           setCuentas(data.cuentas);
-        })
-        .catch(error => {
-          console.error('Error al obtener los datos del cliente', error);
-        });
+        } catch (error) {
+          console.error('Error al obtener los datos del cliente en pantalla:', error);
+        }
       }
     };
     fetchClienteData();

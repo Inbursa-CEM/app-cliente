@@ -29,8 +29,9 @@ const InicioSesion = ({ navigation }) => {
       }
 
       //Si no funciona, tengo que cambiar estas lineas jiji
-      await AsyncStorage.setItem('idCliente', JSON.stringify(data));
-      navigation.navigate('PantallaPrincipal', { cliente: data });
+      await AsyncStorage.setItem('idCliente', data.idCliente.toString());
+      console.log('idCliente pantalla principal:', data.idCliente.toString());
+      navigation.navigate('PantallaPrincipal');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
       Alert.alert('Error', error.message || 'Error al iniciar sesión');
