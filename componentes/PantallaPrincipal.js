@@ -15,7 +15,7 @@ const PantallaPrincipal = () => {
       const idCliente = await AsyncStorage.getItem('idCliente');
       if (idCliente) {
         //Cambiar localhost a IP
-        fetch('http://localhost:8080/cliente/${idCliente}/cuentas')
+        fetch('http://10.48.70.212:8080/cliente/${idCliente}/cuenta/cuentas')
         .then(response => response.json())
         .then(data => {
           setCliente(data.cliente);
@@ -78,7 +78,7 @@ const PantallaPrincipal = () => {
               ))}
             </View>
         </TouchableOpacity>
-        
+
         </View>
       </View>
       <Modal
