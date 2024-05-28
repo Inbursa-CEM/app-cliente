@@ -20,6 +20,7 @@ const InicioSesion = ({ navigation }) => {
     };
 
     try {
+      //Cambiar localhost a IP
       const response = await fetch('http://localhost:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
@@ -27,8 +28,9 @@ const InicioSesion = ({ navigation }) => {
         throw new Error(data.error || 'Error al iniciar sesión');
       }
 
-      await AsyncStorage.setItem('cliente', JSON.stringify(data));
-      navigation.navigate('PantallaPrincipal', { cliente: data });
+      //Si no funciona, tengo que cambiar estas lineas jiji
+      await AsyncStorage.setItem('idCliente', data.idCliente.toString());
+      navigation.navigate('PantallaPrincipal');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
       Alert.alert('Error', error.message || 'Error al iniciar sesión');

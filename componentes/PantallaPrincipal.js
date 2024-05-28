@@ -1,16 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Boton from "./Boton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PantallaPrincipal = () => {
+  const [cliente, setCliente] = useState(null);
+  const [cuentas, setCuentas] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchClienteData = async() => {
+      const idCliente = await AsyncStorage.getItem('idCliente');
+      if (idCliente) {
+        //Cambiar localhost a IP
+        fetch('http://localhost:8080/cliente/${idCliente}/cuentas')
+        .then(response => response.json())
+        .then(data => {
+          setCliente(data.cliente);
+          setCuentas(data.cuentas);
+        })
+        .catch(error => {
+          console.error('Error al obtener los datos del cliente', error);
+        });
+      }
+    };
+    fetchClienteData();
+  }, []);
+
+  if(!cliente) {
+    return <Text>Cargando...</Text>;
+  }
 
   return (
     <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
       <View style={styles.container}>
-        <Text style={styles.usuario}>Andrés Iván Rodríguez Méndez</Text>
+        <Text style={styles.usuario}>{cliente.nombre}</Text>
         <View style={styles.contenedorPrincipal}>
           <View style={[styles.subContainer, styles.border]}>
             <Text style={[styles.titulo, styles.bold, styles.center]}>Mis tarjetas</Text>
@@ -19,40 +45,40 @@ const PantallaPrincipal = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.subContainer, styles.border]}>
-            <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Cuenta bancaria</Text>
-            <View style={styles.transaccion}>
-              <View>
-                <Text style={styles.textMediano}>Terminación</Text>
-                <Text style={styles.textCantidadCuenta}>*12345</Text>
-              </View>
-              <View style={styles.right}>
-                <Text style={styles.textMediano}>Saldo disponible</Text>
-                <Text style={styles.textCantidadCuenta}>$30,000</Text>
+          {cuentas.map((cuenta, index) => (
+            <View key={index} style={[styles.subContainer, styles.border]}>
+              <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Cuenta bancaria</Text>
+              <View style={styles.transaccion}>
+                <View>
+                  <Text style={styles.textMediano}>Terminación</Text>
+                  <Text style={styles.textCantidadCuenta}>*{cuenta.numCuenta.slice(-4)}</Text>
+                </View>
+                <View style={styles.right}>
+                  <Text style={styles.textMediano}>Saldo disponible</Text>
+                  <Text style={styles.textCantidadCuenta}>${cuenta.saldo}</Text>
+                </View>
               </View>
             </View>
-          </View>
+          ))}
 
-          <TouchableOpacity onPress={() => navigation.navigate('Transacciones')}>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Transacciones')}>
             <View style={[styles.subContainer, styles.border]}>
               <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Transacciones recientes</Text>
-              <View style={styles.transaccion}>
-                <View>
-                  <Text style={styles.text}>18 Mayo 2024</Text>
-                  <Text style={styles.textDescripcion}>Pull bear polanco</Text>
-                </View>
-                <Text style={[styles.textTransaccion, styles.right]}>$3000</Text>
-              </View>
-              <View style={styles.transaccion}>
-                <View>
-                  <Text style={styles.text}>12 Mayo 2024</Text>
-                  <Text style={styles.textDescripcion}>Pago cuenta de tercero</Text>
-                </View>
-                <Text style={[styles.textTransaccion, styles.right]}>$1000</Text>
-              </View>
+              {cuentas.map((cuenta, index) => (
+                cuenta.Transacciones.slice(0, 2).map((transaccion, tIndex) => (
+                  <View key={tIndex} style={styles.transaccion}>
+                    <View>
+                      <Text style={styles.text}>{new Date(transaccion.fecha).toLocaleDateString()}</Text>
+                      <Text style={styles.textDescripcion}>{transaccion.nombre}</Text>
+                    </View>
+                    <Text style={[styles.textTransaccion, styles.right]}>${transaccion.monto}</Text>
+                  </View>
+                ))
+              ))}
             </View>
-          </TouchableOpacity>
-
+        </TouchableOpacity>
+        
         </View>
       </View>
       <Modal
