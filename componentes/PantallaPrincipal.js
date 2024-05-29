@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  ImageBackground,
-  Text,
-  Image,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import {StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView,} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,6 +13,8 @@ const PantallaPrincipal = () => {
   const navigation = useNavigation();
   const [cuentas, setCuentas] = useState(null); 
   const [saldo, setSaldo] = useState(null);
+  //Array
+  const [arrayValores, setArrayValores] = useState([]);
 
   useEffect(() => {
     const fetchClienteData = async () => {
@@ -29,6 +22,9 @@ const PantallaPrincipal = () => {
         const idCliente = await AsyncStorage.getItem("idCliente");
         const nombre = await AsyncStorage.getItem("nombre");
         const cliente = idCliente[0];
+        //Jalar los datitos del array guardado
+        const arrayValoresString = await AsyncStorage.getItem('arrayValores');
+
         setNombre(nombre);
         setCliente(cliente);
         if (idCliente) {
@@ -69,6 +65,14 @@ const PantallaPrincipal = () => {
               data.error || "Error al obtener los datos del cliente en pantalla"
             );
           }
+
+          //Hacer un parse para volver a pasar el string de array a un array
+          if(arrayValoresString) {
+            const arrayValores = JSON.parse(arrayValoresString);
+            setArrayValores(arrayValores);
+            console.log('Array recuperado: ', arrayValores);
+          }
+          
         } else {
           console.error("idCliente no encontrado en AsyncStorage");
         }

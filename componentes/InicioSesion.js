@@ -8,6 +8,7 @@ const InicioSesion = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
+  const arrayValores = [1, 2, 3, 4, 5];
 
   const handleLogin = async () => {
     setLoading(true);
@@ -20,7 +21,6 @@ const InicioSesion = ({ navigation }) => {
     };
 
     try {
-      //Cambiar localhost a IP
       const response = await fetch('http://10.48.70.212:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
@@ -28,9 +28,11 @@ const InicioSesion = ({ navigation }) => {
         throw new Error(data.error || 'Error al iniciar sesión');
       }
 
-      //Si no funciona, tengo que cambiar estas lineas jiji
       await AsyncStorage.setItem('idCliente', data.idCliente.toString());
       await AsyncStorage.setItem('nombre', data.nombre);
+      //Intento para guardar array
+      await AsyncStorage.setItem('arrayValores', JSON.stringify(arrayValores));
+      console.log('Array guardado: ', arrayValores);
       console.log('idCliente pantalla principal:', data.idCliente.toString());
       navigation.navigate('PantallaPrincipal');
     } catch (error) {
