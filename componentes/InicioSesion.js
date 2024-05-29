@@ -30,6 +30,7 @@ const InicioSesion = ({ navigation }) => {
 
       //Si no funciona, tengo que cambiar estas lineas jiji
       await AsyncStorage.setItem('idCliente', data.idCliente.toString());
+      await AsyncStorage.setItem('nombre', data.nombre);
       console.log('idCliente pantalla principal:', data.idCliente.toString());
       navigation.navigate('PantallaPrincipal');
     } catch (error) {

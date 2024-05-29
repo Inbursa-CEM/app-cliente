@@ -1,93 +1,151 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  Text,
+  Image,
+  Modal,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PantallaPrincipal = () => {
+  const [nombre, setNombre] = useState(null);
+  let tarjetas = [];
+  const [numCuenta, setnumCuenta] = useState(null);
   const [cliente, setCliente] = useState(null);
-  const [cuentas, setCuentas] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
   const navigation = useNavigation();
+  const [cuentas, setCuentas] = useState(null); 
+  const [saldo, setSaldo] = useState(null);
 
   useEffect(() => {
     const fetchClienteData = async () => {
       try {
-        const idCliente = await AsyncStorage.getItem('idCliente');
+        const idCliente = await AsyncStorage.getItem("idCliente");
+        const nombre = await AsyncStorage.getItem("nombre");
+        const cliente = idCliente[0];
+        setNombre(nombre);
+        setCliente(cliente);
         if (idCliente) {
+          //Llamada a la API para obtener los datos del cliente
           const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idCliente })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idCliente }),
           };
 
-          const response = await fetch('http://10.48.70.212:8080/cuenta/cuentas', requestOptions);
+
+          const response = await fetch(
+            "http://10.48.70.212:8080/cuenta/cuentas",
+            requestOptions
+          );
           const data = await response.json();
+          const cuentas = data[0].idCuenta;
+          setCuentas(cuentas);
+
+          const requestOptions2 = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idCuenta: cuentas }),
+          };
+          const response2 = await fetch(
+            "http://10.48.70.212:8080/tarjeta/getTarjetasxCuenta",
+            requestOptions2
+          );
+          const data2 = await response2.json();
+          tarjetas = data2;
+          console.log(tarjetas);
+          setnumCuenta(tarjetas[0].numCuenta);
+          setSaldo(tarjetas[0].saldo);
+          
 
           if (!response.ok) {
-            throw new Error(data.error || 'Error al obtener los datos del cliente en pantalla');
+            throw new Error(
+              data.error || "Error al obtener los datos del cliente en pantalla"
+            );
           }
-          setCliente(data.cliente);
-          setCuentas(data.cuentas);
         } else {
-          console.error('idCliente no encontrado en AsyncStorage');
+          console.error("idCliente no encontrado en AsyncStorage");
         }
       } catch (error) {
-        console.error('Error al obtener los datos del cliente en pantalla:', error);
+        console.error(
+          "Error al obtener los datos del cliente en pantalla:",
+          error
+        );
       }
     };
+    console.log("Tarjetas", tarjetas);
     fetchClienteData();
   }, []);
 
-  if(!cliente) {
-    return <Text>Cargando...</Text>;
-  }
-
   return (
-    <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../assets/PantallaFondo.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.container}>
-        <Text style={styles.usuario}>{cliente.nombre}</Text>
+        <Text style={styles.usuario}>{nombre}</Text>
         <View style={styles.contenedorPrincipal}>
           <View style={[styles.subContainer, styles.border]}>
-            <Text style={[styles.titulo, styles.bold, styles.center]}>Mis tarjetas</Text>
+            <Text style={[styles.titulo, styles.bold, styles.center]}>
+              Mis tarjetas
+            </Text>
             <TouchableOpacity onPress={() => setPopupVisible(true)}>
-              <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
+              <Text>{}</Text>
             </TouchableOpacity>
           </View>
 
-          {cuentas.map((cuenta, index) => (
-            <View key={index} style={[styles.subContainer, styles.border]}>
-              <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Cuenta bancaria</Text>
-              <View style={styles.transaccion}>
-                <View>
-                  <Text style={styles.textMediano}>Terminación</Text>
-                  <Text style={styles.textCantidadCuenta}>*{cuenta.numCuenta.slice(-4)}</Text>
-                </View>
-                <View style={styles.right}>
-                  <Text style={styles.textMediano}>Saldo disponible</Text>
-                  <Text style={styles.textCantidadCuenta}>${cuenta.saldo}</Text>
-                </View>
+          <View style={[styles.subContainer, styles.border]}>
+            <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
+              Cuenta bancaria
+            </Text>
+            <View style={styles.transaccion}>
+              <View>
+                <Text style={styles.textMediano}>Terminación</Text>
+                <Text style={styles.textCantidadCuenta}>{numCuenta}</Text>
+              </View>
+              <View style={styles.right}>
+                <Text style={styles.textMediano}>Saldo disponible</Text>
+                <Text style={styles.textCantidadCuenta}>{saldo}</Text>
               </View>
             </View>
-          ))}
+          </View>
 
-
-        <TouchableOpacity onPress={() => navigation.navigate('Transacciones')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Transacciones")}
+          >
             <View style={[styles.subContainer, styles.border]}>
-              <Text style={[styles.titulo, styles.bold, { color: '#012148' }]}>Transacciones recientes</Text>
-              {cuentas.map((cuenta, index) => (
-                cuenta.Transacciones.slice(0, 2).map((transaccion, tIndex) => (
-                  <View key={tIndex} style={styles.transaccion}>
-                    <View>
-                      <Text style={styles.text}>{new Date(transaccion.fecha).toLocaleDateString()}</Text>
-                      <Text style={styles.textDescripcion}>{transaccion.nombre}</Text>
-                    </View>
-                    <Text style={[styles.textTransaccion, styles.right]}>${transaccion.monto}</Text>
-                  </View>
-                ))
-              ))}
+              <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
+                Transacciones recientes
+              </Text>
+              <View style={styles.transaccion}>
+                <View>
+                  <Text style={styles.text}>18 Mayo 2024</Text>
+                  <Text style={styles.textDescripcion}>Pull bear polanco</Text>
+                </View>
+                <Text style={[styles.textTransaccion, styles.right]}>
+                  $3000
+                </Text>
+              </View>
+              <View style={styles.transaccion}>
+                <View>
+                  <Text style={styles.text}>12 Mayo 2024</Text>
+                  <Text style={styles.textDescripcion}>
+                    Pago cuenta de tercero
+                  </Text>
+                </View>
+                <Text style={[styles.textTransaccion, styles.right]}>
+                  $1000
+                </Text>
+              </View>
             </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -99,11 +157,19 @@ const PantallaPrincipal = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={[styles.titulo, styles.bold, styles.center]}>Tarjeta de crédito</Text>
+            <Text style={[styles.titulo, styles.bold, styles.center]}>
+              Tarjeta de crédito
+            </Text>
             <ScrollView contentContainerStyle={styles.scrollView}>
               {[...Array(6)].map((_, i) => (
-                <TouchableOpacity key={i} onPress={() => setPopupVisible(false)}>
-                  <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => setPopupVisible(false)}
+                >
+                  <Image
+                    source={require("../assets/tarjeta.png")}
+                    style={styles.image}
+                  ></Image>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -112,104 +178,102 @@ const PantallaPrincipal = () => {
         </View>
       </Modal>
     </ImageBackground>
-
   );
 };
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center'
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   contenedorPrincipal: {
-    width: '90%',
-    marginTop: 27
+    width: "90%",
+    marginTop: 27,
   },
   subContainer: {
-    backgroundColor: 'rgba(217, 217, 217, 0.42)',
+    backgroundColor: "rgba(217, 217, 217, 0.42)",
     borderRadius: 10,
     padding: 18,
-    marginBottom: 18
+    marginBottom: 18,
   },
   usuario: {
     fontSize: 18,
-    color: '#012148',
+    color: "#012148",
     marginTop: 185,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   center: {
-    textAlign: 'center',
-    color: '#012148'
+    textAlign: "center",
+    color: "#012148",
   },
   titulo: {
-    fontSize: 20
+    fontSize: 20,
   },
   text: {
     fontSize: 17,
-    marginTop: 6
+    marginTop: 6,
   },
   textMediano: {
     fontSize: 17,
-    color: '#235894',
-    marginTop: 6
+    color: "#235894",
+    marginTop: 6,
   },
   textCantidadCuenta: {
     fontSize: 16,
-    fontStyle: 'italic'
+    fontStyle: "italic",
   },
   textDescripcion: {
     fontSize: 14,
-    color: '#235894',
-
+    color: "#235894",
   },
   textTransaccion: {
     fontSize: 20,
-    fontStyle: 'italic'
+    fontStyle: "italic",
   },
   bold: {
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   right: {
-    textAlign: 'right'
+    textAlign: "right",
   },
   image: {
     width: 203,
     height: 135,
-    alignSelf: 'center',
-    marginTop: 10
+    alignSelf: "center",
+    marginTop: 10,
   },
   transaccion: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    maxHeight: '80%',
+    alignItems: "center",
+    maxHeight: "80%",
   },
   scrollView: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   border: {
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
   },
 });
 
