@@ -11,27 +11,29 @@ const PantallaPrincipal = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchClienteData = async() => {
-      const idCliente = await AsyncStorage.getItem('idCliente');
-      if (idCliente) {
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idCliente: idCliente})
-        };
+    const fetchClienteData = async () => {
+      try {
+        const idCliente = await AsyncStorage.getItem('idCliente');
+        if (idCliente) {
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idCliente })
+          };
 
-        try {
           const response = await fetch('http://10.48.70.212:8080/cuenta/cuentas', requestOptions);
           const data = await response.json();
-          console.log('data:', data);
+
           if (!response.ok) {
             throw new Error(data.error || 'Error al obtener los datos del cliente en pantalla');
           }
           setCliente(data.cliente);
           setCuentas(data.cuentas);
-        } catch (error) {
-          console.error('Error al obtener los datos del cliente en pantalla:', error);
+        } else {
+          console.error('idCliente no encontrado en AsyncStorage');
         }
+      } catch (error) {
+        console.error('Error al obtener los datos del cliente en pantalla:', error);
       }
     };
     fetchClienteData();
@@ -86,9 +88,9 @@ const PantallaPrincipal = () => {
               ))}
             </View>
         </TouchableOpacity>
-
         </View>
       </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -97,33 +99,20 @@ const PantallaPrincipal = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-          <Text style={[styles.titulo, styles.bold, styles.center]}>Tarjeta de crédito</Text>
+            <Text style={[styles.titulo, styles.bold, styles.center]}>Tarjeta de crédito</Text>
             <ScrollView contentContainerStyle={styles.scrollView}>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setPopupVisible(false)}>
-                <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
-              </TouchableOpacity>
-            
+              {[...Array(6)].map((_, i) => (
+                <TouchableOpacity key={i} onPress={() => setPopupVisible(false)}>
+                  <Image source={require('../assets/tarjeta.png')} style={styles.image}></Image>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
             <Boton title="Cerrar" onPress={() => setPopupVisible(false)} />
           </View>
         </View>
       </Modal>
     </ImageBackground>
+
   );
 };
 
