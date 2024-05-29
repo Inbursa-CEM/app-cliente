@@ -24,7 +24,7 @@ const PantallaPrincipal = () => {
         const nombre = await AsyncStorage.getItem("nombre");
         const idCuenta = await AsyncStorage.getItem("cuentas");
         const cliente = idCliente[0];
-        const arrayValoresString = await AsyncStorage.getItem('InfoTarjetas');
+        const arrayValoresString = await AsyncStorage.getItem('infotarjetas');
         setNombre(nombre);
         setCliente(cliente);
         setCuentas(idCuenta);
@@ -70,11 +70,11 @@ const PantallaPrincipal = () => {
             <View style={styles.transaccion}>
               <View>
                 <Text style={styles.textMediano}>Terminación</Text>
-                <Text style={styles.textCantidadCuenta}>{numCuenta}</Text>
+                <Text style={styles.textCantidadCuenta}>{infotarjetas.length > 0 ? infotarjetas[0].numCuenta.slice(-4): ""}</Text>
               </View>
               <View style={styles.right}>
                 <Text style={styles.textMediano}>Saldo disponible</Text>
-                <Text style={styles.textCantidadCuenta}>{saldo}</Text>
+                <Text style={styles.textCantidadCuenta}>{infotarjetas.length > 0 ? infotarjetas[0].saldo: ""}</Text>
               </View>
             </View>
           </View>
