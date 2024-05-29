@@ -6,9 +6,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const InicioSesion = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cuentas, setCuentas] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const arrayValores = [1, 2, 3, 4, 5];
+  const arrayTarjetas = [];
 
   const handleLogin = async () => {
     setLoading(true);
@@ -30,8 +32,55 @@ const InicioSesion = ({ navigation }) => {
 
       await AsyncStorage.setItem('idCliente', data.idCliente.toString());
       await AsyncStorage.setItem('nombre', data.nombre);
+      var idCliente = data.idCliente;
+
+      if (idCliente) {
+        //Llamada a la API para obtener los datos del cliente
+        const requestOptions2 = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idCliente }),
+        };
+        const response2 = await fetch(
+          "http://10.48.70.212:8080/cuenta/cuentas",
+          requestOptions2
+        );
+        const data2 = await response2.json();
+        const cuentas = data2[0].idCuenta;
+        setCuentas(cuentas);
+        console.log('Cuentas en login:', cuentas);
+        await AsyncStorage.setItem('cuentas', cuentas.toString());
+
+        if (cuentas) {
+          //Llamada a la API para obtener los datos de la tarjeta
+          const requestOptions3 = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idCuenta: cuentas }),
+          };
+          const response3 = await fetch(
+            "http://10.48.70.212:8080/tarjeta/getTarjetasxCuenta",
+            requestOptions3
+          );
+          const data3 = await response3.json();
+          var temp = []
+          for (let i = 0; i < data3.length; i++) {
+            temp.push(data3[i].numCuenta);
+          }
+          arrayTarjetas.push(temp);
+          temp = []
+          for (let i = 0; i < data3.length; i++) {
+            temp.push(data3[i].saldo);
+          }
+          arrayTarjetas.push(temp);
+          console.log('Array tarjetas:', arrayTarjetas);
+          await AsyncStorage.setItem('InfoTarjetas', JSON.stringify(arrayTarjetas));
+
+      };
+    }
       //Intento para guardar array
       await AsyncStorage.setItem('arrayValores', JSON.stringify(arrayValores));
+  
       console.log('Array guardado: ', arrayValores);
       console.log('idCliente pantalla principal:', data.idCliente.toString());
       navigation.navigate('PantallaPrincipal');

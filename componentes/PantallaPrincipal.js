@@ -13,6 +13,7 @@ const PantallaPrincipal = () => {
   const navigation = useNavigation();
   const [cuentas, setCuentas] = useState(null); 
   const [saldo, setSaldo] = useState(null);
+  const [infotarjetas, setInfoTarjetas] = useState(null);
   //Array
   const [arrayValores, setArrayValores] = useState([]);
 
@@ -21,61 +22,19 @@ const PantallaPrincipal = () => {
       try {
         const idCliente = await AsyncStorage.getItem("idCliente");
         const nombre = await AsyncStorage.getItem("nombre");
+        const idCuenta = await AsyncStorage.getItem("cuentas");
         const cliente = idCliente[0];
-        //Jalar los datitos del array guardado
-        const arrayValoresString = await AsyncStorage.getItem('arrayValores');
-
+        const arrayValoresString = await AsyncStorage.getItem('InfoTarjetas');
         setNombre(nombre);
         setCliente(cliente);
-        if (idCliente) {
-          //Llamada a la API para obtener los datos del cliente
-          const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idCliente }),
-          };
-
-
-          const response = await fetch(
-            "http://10.48.70.212:8080/cuenta/cuentas",
-            requestOptions
-          );
-          const data = await response.json();
-          const cuentas = data[0].idCuenta;
-          setCuentas(cuentas);
-
-          const requestOptions2 = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idCuenta: cuentas }),
-          };
-          const response2 = await fetch(
-            "http://10.48.70.212:8080/tarjeta/getTarjetasxCuenta",
-            requestOptions2
-          );
-          const data2 = await response2.json();
-          tarjetas = data2;
-          console.log(tarjetas);
-          setnumCuenta(tarjetas[0].numCuenta);
-          setSaldo(tarjetas[0].saldo);
-          
-
-          if (!response.ok) {
-            throw new Error(
-              data.error || "Error al obtener los datos del cliente en pantalla"
-            );
-          }
-
-          //Hacer un parse para volver a pasar el string de array a un array
-          if(arrayValoresString) {
-            const arrayValores = JSON.parse(arrayValoresString);
-            setArrayValores(arrayValores);
-            console.log('Array recuperado: ', arrayValores);
-          }
-          
-        } else {
-          console.error("idCliente no encontrado en AsyncStorage");
+        setCuentas(idCuenta);
+        console.log("AYUDA", arrayValoresString);
+        if(arrayValoresString) {
+          const arrayValores = JSON.parse(arrayValoresString);
+          setInfoTarjetas(arrayValores);
+          console.log('Array recuperado: ', arrayValores);
         }
+
       } catch (error) {
         console.error(
           "Error al obtener los datos del cliente en pantalla:",
@@ -83,7 +42,6 @@ const PantallaPrincipal = () => {
         );
       }
     };
-    console.log("Tarjetas", tarjetas);
     fetchClienteData();
   }, []);
 
