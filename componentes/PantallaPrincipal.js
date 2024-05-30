@@ -1,49 +1,44 @@
 import React, { useEffect, useState } from "react";
-import {StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView,} from "react-native";
+import {StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView, ActivityIndicator,} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PantallaPrincipal = () => {
   const [nombre, setNombre] = useState(null);
-  let tarjetas = [];
-  const [numCuenta, setnumCuenta] = useState(null);
-  const [cliente, setCliente] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  const navigation = useNavigation();
-  const [cuentas, setCuentas] = useState(null); 
-  const [saldo, setSaldo] = useState(null);
   const [infotarjetas, setInfoTarjetas] = useState(null);
-  //Array
-  const [arrayValores, setArrayValores] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchClienteData = async () => {
       try {
-        const idCliente = await AsyncStorage.getItem("idCliente");
         const nombre = await AsyncStorage.getItem("nombre");
-        const idCuenta = await AsyncStorage.getItem("cuentas");
-        const cliente = idCliente[0];
-        const arrayValoresString = await AsyncStorage.getItem('infotarjetas');
+        const infotarjetasString = await AsyncStorage.getItem('InfoTarjetas');
+
         setNombre(nombre);
-        setCliente(cliente);
-        setCuentas(idCuenta);
-        console.log("AYUDA", arrayValoresString);
-        if(arrayValoresString) {
-          const arrayValores = JSON.parse(arrayValoresString);
-          setInfoTarjetas(arrayValores);
-          console.log('Array recuperado: ', arrayValores);
+        console.log("AYUDA", infotarjetasString);
+
+        if(infotarjetasString) {
+          const infotarjetas = JSON.parse(infotarjetasString);
+          setInfoTarjetas(infotarjetas);
+          console.log('Array recuperado: ', infotarjetas);
         }
 
       } catch (error) {
         console.error(
-          "Error al obtener los datos del cliente en pantalla:",
-          error
-        );
+          "Error al obtener los datos del cliente en pantalla:", error);
+      } finally {
+        setCargando(false);
       }
     };
     fetchClienteData();
   }, []);
+
+  if (cargando) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <ImageBackground
@@ -63,21 +58,23 @@ const PantallaPrincipal = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.subContainer, styles.border]}>
-            <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
-              Cuenta bancaria
-            </Text>
-            <View style={styles.transaccion}>
-              <View>
-                <Text style={styles.textMediano}>Terminación</Text>
-                <Text style={styles.textCantidadCuenta}>{infotarjetas.length > 0 ? infotarjetas[0].numCuenta.slice(-4): ""}</Text>
-              </View>
-              <View style={styles.right}>
-                <Text style={styles.textMediano}>Saldo disponible</Text>
-                <Text style={styles.textCantidadCuenta}>{infotarjetas.length > 0 ? infotarjetas[0].saldo: ""}</Text>
+          {infotarjetas && infotarjetas.length === 2 && (
+            <View style={[styles.subContainer, styles.border]}>
+              <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
+                Cuenta bancaria
+              </Text>
+              <View style={styles.transaccion}>
+                <View>
+                  <Text style={styles.textMediano}>Terminación</Text>
+                  <Text style={styles.textCantidadCuenta}>{infotarjetas[0][0].toString().slice(-4)}</Text>
+                </View>
+                <View style={styles.right}>
+                  <Text style={styles.textMediano}>Saldo disponible</Text>
+                  <Text style={styles.textCantidadCuenta}>{infotarjetas[1][0]}</Text>
+                </View>
               </View>
             </View>
-          </View>
+          )}
 
           <TouchableOpacity
             onPress={() => navigation.navigate("Transacciones")}

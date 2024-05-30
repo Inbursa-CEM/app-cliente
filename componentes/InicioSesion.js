@@ -6,7 +6,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const InicioSesion = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [cuentas, setCuentas] = useState(null); 
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const arrayValores = [1, 2, 3, 4, 5];
@@ -23,7 +22,7 @@ const InicioSesion = ({ navigation }) => {
     };
 
     try {
-      const response = await fetch('http://10.48.70.212:8080/cliente/getDatosCliente', requestOptions);
+      const response = await fetch('http://192.168.0.17:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
       if (!response.ok) {
@@ -42,12 +41,11 @@ const InicioSesion = ({ navigation }) => {
           body: JSON.stringify({ idCliente }),
         };
         const response2 = await fetch(
-          "http://10.48.70.212:8080/cuenta/cuentas",
+          "http://192.168.0.17:8080/cuenta/cuentas",
           requestOptions2
         );
         const data2 = await response2.json();
         const cuentas = data2[0].idCuenta;
-        setCuentas(cuentas);
         console.log('Cuentas en login:', cuentas);
         await AsyncStorage.setItem('cuentas', cuentas.toString());
 
@@ -59,7 +57,7 @@ const InicioSesion = ({ navigation }) => {
             body: JSON.stringify({ idCuenta: cuentas }),
           };
           const response3 = await fetch(
-            "http://10.48.70.212:8080/tarjeta/getTarjetasxCuenta",
+            "http://192.168.0.17:8080/tarjeta/getTarjetasxCuenta",
             requestOptions3
           );
           const data3 = await response3.json();
@@ -75,7 +73,6 @@ const InicioSesion = ({ navigation }) => {
           arrayTarjetas.push(temp);
           console.log('Array tarjetas:', arrayTarjetas);
           await AsyncStorage.setItem('InfoTarjetas', JSON.stringify(arrayTarjetas));
-
       };
     }
       //Intento para guardar array
@@ -83,6 +80,7 @@ const InicioSesion = ({ navigation }) => {
   
       console.log('Array guardado: ', arrayValores);
       console.log('idCliente pantalla principal:', data.idCliente.toString());
+
       navigation.navigate('PantallaPrincipal');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
