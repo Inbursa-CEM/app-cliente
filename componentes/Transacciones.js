@@ -23,7 +23,7 @@ const Transacciones = () => {
                 requestOptions
             );
             const data = await response.json();
-            console.log("Datos recibidos:", data); // Verificar datos recibidos
+            console.log("Datos recibidos:", data);
             if (Array.isArray(data)) {
                 setTransacciones(data);
             } else {
@@ -48,7 +48,7 @@ const Transacciones = () => {
     }, []);
 
     useEffect(() => {
-        console.log("Transacciones:", transacciones); // Verificar estado de transacciones
+        console.log("Transacciones:", transacciones);
     }, [transacciones]);
 
     const formatearFecha = (fecha) => {
