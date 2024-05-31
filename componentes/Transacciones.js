@@ -1,66 +1,99 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { ImageBackground, StyleSheet, View, Text, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ImageBackground, StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Transacciones = () => {
 
+    const [transacciones, setTransacciones] = useState([]);
+    const [cargando, setCargando] = useState(true);
     const [mesSeleccionado, setMesSeleccionado] = useState("Enero");
     const navigation = useNavigation();
 
-    const meses = [
-        "En", "Feb", "Mar", "Abr", "May", "Jun", 
-        "Jul", "Ag", "Sep", "Oct", "Nov", "Dec"
-    ];
+    const descargarTransacciones = async (numCuenta) => {
+        try {
+            const info = JSON.stringify({ numCuenta });
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: info,
+            };
+            const response = await fetch(
+                "http://10.48.70.212:8080/transaccion/getTransacciones",
+                requestOptions
+            );
+            const data = await response.json();
+            console.log("Datos recibidos:", data); // Verificar datos recibidos
+            if (Array.isArray(data)) {
+                setTransacciones(data);
+            } else {
+                setTransacciones([]);
+            }
+        } catch (error) {
+            console.error("Error al obtener las transacciones:", error);
+            setTransacciones([]);
+        } finally {
+            setCargando(false);
+        }
+    };
 
-    const transacciones = [
-        {fecha: "1 Enero 2024", descripcion: "Aliexpress pago", monto: "Monto:", cantidad: "$1820"},
-        {fecha: "3 Enero 2024", descripcion: "Steam firewatch", monto: "Monto:", cantidad: "$230"},
-        {fecha: "5 Enero 2024", descripcion: "Spotify premium pago", monto: "Monto:", cantidad: "$129"},
-        {fecha: "12 Enero 2024", descripcion: "Pago cuenta de tercero", monto: "Monto:", cantidad: "$1600"},
-        {fecha: "18 Enero 2024", descripcion: "Bershka polanco", monto: "Monto", cantidad: "$630"},
-        {fecha: "22 Enero 2024", descripcion: "Pago cuenta de tercero", monto: "Monto:", cantidad: "$300"},
-        {fecha: "24 Enero 2024", descripcion: "D localriot", monto: "Monto:", cantidad: "$399"},
-        {fecha: "26 Enero 2024", descripcion: "Pago cuenta de tercero", monto: "Monto:", cantidad: "$2095"},
-        {fecha: "31 Enero 2024", descripcion: "Krispy kreme pago", monto: "Monto:", cantidad: "$200"}
-    ];
+    useEffect(() => {
+        const fetchTransacciones = async () => {
+            const terminacion = await AsyncStorage.getItem("terminacion");
+            if (terminacion) {
+                descargarTransacciones(terminacion);
+            }
+        };
+        fetchTransacciones();
+    }, []);
+
+    useEffect(() => {
+        console.log("Transacciones:", transacciones); // Verificar estado de transacciones
+    }, [transacciones]);
+
+    const formatearFecha = (fecha) => {
+        const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaNueva = new Date(fecha).toLocaleDateString('es-ES', opciones);
+        console.log(fechaNueva);
+        return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
+    };
+
+    const transaccionesFormateadas = Array.isArray(transacciones) ? transacciones.map(t => ({
+        fecha: formatearFecha(t.fecha.split('T')[0]),
+        descripcion: t.detalle,
+        monto: `$${t.monto}`
+    })) : [];
+
+    if (cargando) {
+        return <ActivityIndicator size="large" color="#0000ff" />;
+    }
 
     return (
         <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
             <View style={styles.container}>
                 <Text style={styles.titulo}>Transacciones</Text>
-                <View style={[styles.subContainer, styles.border]}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={true} contentContainerStyle={styles.contenedorMeses}>
-                        {meses.map(mes => (
-                            <TouchableOpacity key={mes} onPress={() => setMesSeleccionado(mes)}>
-                                <Text style={[styles.textoMes, mesSeleccionado === mes && styles.mesSeleccionado]}>{mes}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-
                 <View style={[styles.subContainer, styles.border, styles.contenedorTransaccciones]}>
                     <ScrollView>
-                        {transacciones.map((transaccion, index) => (
+                        {transaccionesFormateadas.map((transaccion, index) => (
                             <TouchableOpacity 
                             key={index} 
-                            style={[styles.transaccion, index !== transacciones.length -1 && styles.transaccionDivider]}
+                            style={[styles.transaccion, index !== transaccionesFormateadas.length -1 && styles.transaccionDivider]}
                             onPress={() => navigation.navigate('DetalleTransaccion', {transaccion: transaccion})}>
                                 <View>
                                     <Text style={styles.fechaTransaccion}>{transaccion.fecha}</Text>
                                     <Text style={styles.transaccionDescripcion}>{transaccion.descripcion}</Text>
                                 </View>
                                 <View style={styles.contenedorMonto}>
-                                    <Text style={styles.montoTransaccion}>{transaccion.monto}</Text>
-                                    <Text style={styles.cantidad}>{transaccion.cantidad}</Text>
+                                    <Text style={styles.montoTransaccion}>Monto:</Text>
+                                    <Text style={styles.cantidad}>{transaccion.monto}</Text>
                                 </View>
                             </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                        ))}
+                    </ScrollView>
                 </View>
             </View>
         </ImageBackground>
     );
-
 };
 
 const styles = StyleSheet.create ({
@@ -85,29 +118,14 @@ const styles = StyleSheet.create ({
     titulo: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginTop: 185, 
+        marginTop: 195, 
         marginBottom: 20,
-        color: '#012148'
-    },
-    contenedorMeses: {
-        marginBottom: 20,
-        paddingHorizontal: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row'
-    },
-    textoMes: {
-        fontSize: 18,
-        marginRight: 10,
-        color: '#012148'
-    },
-    mesSeleccionado: {
-        fontWeight: 'bold',
         color: '#012148'
     },
     contenedorTransaccciones: {
         flex: 1,
-        width: '90%'
+        width: '90%',
+        marginTop: 5 
     },
     transaccion: {
         flexDirection: 'row',

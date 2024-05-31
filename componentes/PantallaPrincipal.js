@@ -1,15 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  StyleSheet,
-  View,
-  ImageBackground,
-  Text,
-  Image,
-  Modal,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView, ActivityIndicator} from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -84,6 +74,8 @@ const PantallaPrincipal = () => {
           setEstatusTransaccion(arrayTransacciones[0][0][1]);
           setIdTransaccion(arrayTransacciones[0][0][3]);
           setDetalleTransaccion(arrayTransacciones[0][0][0]);
+
+          await AsyncStorage.setItem('terminacion', infotarjetas[0][0].toString());
         }
       }
 
@@ -125,6 +117,8 @@ const PantallaPrincipal = () => {
     await descargarTransacciones(JSON.stringify({numCuenta: infotarjetas[0][i]}), arrayTransacciones);
     console.log('Array transacciones en handle2 :', arrayTransacciones);
     console.log(`Tarjeta seleccionada: ${infotarjetas[0][i]}`);
+
+    await AsyncStorage.setItem('terminacion', infotarjetas[0][i].toString());
   };
 
   return (
@@ -134,7 +128,7 @@ const PantallaPrincipal = () => {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <Text style={styles.usuario}>{nombre}</Text>
+        <Text style={styles.usuario}>Hola, {nombre}</Text>
         <View style={styles.contenedorPrincipal}>
           <View style={[styles.subContainer, styles.border]}>
             <Text style={[styles.titulo, styles.bold, styles.center]}>
@@ -250,10 +244,9 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   usuario: {
-    fontSize: 18,
+    fontSize: 19,
     color: "#012148",
-    marginTop: 185,
-    fontWeight: "bold",
+    marginTop: 180,
   },
   center: {
     textAlign: "center",
