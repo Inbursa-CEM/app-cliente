@@ -126,6 +126,30 @@ const PantallaPrincipal = () => {
     }, [tarjetaSeleccionada])
   );
 
+  const formatearFecha = (fecha) => {
+    if (!fecha) return "Fecha no disponible";
+    const opciones = { year: "numeric", month: "long", day: "numeric" };
+    const fechaNueva = new Date(fecha).toLocaleDateString("es-ES", opciones);
+    return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
+
+  };
+
+  const transaccionesFormateadas = Array.isArray(arrayTransacciones) ? arrayTransacciones.flat().map(t => {
+    if (t && t[2] && typeof t[2] === "string") {
+      return {
+        fecha: formatearFecha(t[2].split("T")[0]),
+        descripcion: t[0],
+        monto: `$${t[4]}`
+      };
+    } else {
+      return {
+        fecha: "Fecha no disponible",
+        descripcion: t[0] || "Descripción no disponible",
+        monto: t[4] ? `$${t[4]}` : "Monto no disponible"
+      };
+    }}) : [];
+
+
   if (cargando) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -133,12 +157,7 @@ const PantallaPrincipal = () => {
   const clearList = () => {
     setArrayTransacciones([]); // Actualiza el estado a una matriz vacía
   };
-  const formatearFecha = (fecha) => {
-    const opciones = { year: "numeric", month: "long", day: "numeric" };
-    const fechaNueva = new Date(fecha).toLocaleDateString("es-ES", opciones);
-    console.log(fechaNueva);
-    return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
-  };
+
   const handlePress = async (i) => {
     setPopupVisible(false);
     setTarjetaSeleccionada(infotarjetas[0][i]);
@@ -201,26 +220,28 @@ const PantallaPrincipal = () => {
             </View>
           )}
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Transacciones")}
-          >
-            <View style={[styles.subContainer, styles.border]}>
-              <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
-                Transacciones mas recientes
-              </Text>
-              <View style={styles.transaccion}>
+      <TouchableOpacity onPress={() => navigation.navigate("Transacciones")}>
+        <View style={[styles.subContainer, styles.border]}>
+          <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
+            Transacciones más recientes
+          </Text>
+          {transaccionesFormateadas.length > 0 ? (
+            transaccionesFormateadas.map((transaccion, index) => (
+              <View key={index} style={styles.transaccion}>
                 <View>
-                  <Text style={styles.text}>{fechaTransaccion}</Text>
-                  <Text style={styles.textDescripcion}>
-                    {detalleTransaccion}
-                  </Text>
+                  <Text style={styles.text}>{transaccion.fecha}</Text>
+                  <Text style={styles.textDescripcion}>{transaccion.descripcion}</Text>
                 </View>
                 <Text style={[styles.textTransaccion, styles.right]}>
-                  ${montoTransaccion}
+                  {transaccion.monto}
                 </Text>
               </View>
-            </View>
-          </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.text}>No hay transacciones disponibles</Text>
+          )}
+        </View>
+      </TouchableOpacity>
         </View>
       </View>
 
