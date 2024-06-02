@@ -42,7 +42,7 @@ const PantallaPrincipal = () => {
         body: info,
       };
       const response = await fetch(
-        "http://10.48.70.212:8080/transaccion/getTransacciones",
+        "http://192.168.0.22:8080/transaccion/getTransacciones",
         requestOptions
       );
       const data = await response.json();
@@ -226,20 +226,20 @@ const PantallaPrincipal = () => {
             Transacciones más recientes
           </Text>
           {transaccionesFormateadas.length > 0 ? (
-            transaccionesFormateadas.map((transaccion, index) => (
-              <View key={index} style={styles.transaccion}>
-                <View>
-                  <Text style={styles.text}>{transaccion.fecha}</Text>
-                  <Text style={styles.textDescripcion}>{transaccion.descripcion}</Text>
-                </View>
-                <Text style={[styles.textTransaccion, styles.right]}>
-                  {transaccion.monto}
-                </Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.text}>No hay transacciones disponibles</Text>
-          )}
+    transaccionesFormateadas.slice(0, 4).map((transaccion, index) => (
+        <View key={index} style={styles.transaccion}>
+            <View>
+                <Text style={styles.text}>{transaccion.fecha}</Text>
+                <Text style={styles.textDescripcion}>{transaccion.descripcion}</Text>
+            </View>
+            <Text style={[styles.textTransaccion, styles.right]}>
+                {transaccion.monto}
+            </Text>
+        </View>
+    ))
+) : (
+    <Text style={styles.text}>No hay transacciones disponibles</Text>
+)}
         </View>
       </TouchableOpacity>
         </View>

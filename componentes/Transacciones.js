@@ -9,6 +9,7 @@ const Transacciones = () => {
     const [cargando, setCargando] = useState(true);
     const [mesSeleccionado, setMesSeleccionado] = useState("Enero");
     const navigation = useNavigation();
+    const [idCliente, setIdCliente] = useState(null);
 
     const descargarTransacciones = async (numCuenta) => {
         try {
@@ -19,7 +20,7 @@ const Transacciones = () => {
                 body: info,
             };
             const response = await fetch(
-                "http://10.48.70.212:8080/transaccion/getTransacciones",
+                "http://192.168.0.22:8080/transaccion/getTransacciones",
                 requestOptions
             );
             const data = await response.json();
@@ -40,9 +41,12 @@ const Transacciones = () => {
     useEffect(() => {
         const fetchTransacciones = async () => {
             const terminacion = await AsyncStorage.getItem("terminacion");
+            const idCliente = await AsyncStorage.getItem('idCliente');
+            setIdCliente(idCliente);
             if (terminacion) {
                 descargarTransacciones(terminacion);
             }
+
         };
         fetchTransacciones();
     }, []);
@@ -54,14 +58,17 @@ const Transacciones = () => {
     const formatearFecha = (fecha) => {
         const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
         const fechaNueva = new Date(fecha).toLocaleDateString('es-ES', opciones);
-        console.log(fechaNueva);
         return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
     };
 
     const transaccionesFormateadas = Array.isArray(transacciones) ? transacciones.map(t => ({
         fecha: formatearFecha(t.fecha.split('T')[0]),
         descripcion: t.detalle,
-        monto: `$${t.monto}`
+        monto: `$${t.monto}`,
+        idTransaccion: t.idTransaccion,
+        estatus: t.estatus,
+        numCuenta: t.numCuenta,
+        nombre: t.nombre,   
     })) : [];
 
     if (cargando) {
@@ -78,7 +85,7 @@ const Transacciones = () => {
                             <TouchableOpacity 
                             key={index} 
                             style={[styles.transaccion, index !== transaccionesFormateadas.length -1 && styles.transaccionDivider]}
-                            onPress={() => navigation.navigate('DetalleTransaccion', {transaccion: transaccion})}>
+                            onPress={() => navigation.navigate('DetalleTransaccion', {transaccion: transaccion, idCliente: idCliente})}>
                                 <View>
                                     <Text style={styles.fechaTransaccion}>{transaccion.fecha}</Text>
                                     <Text style={styles.transaccionDescripcion}>{transaccion.descripcion}</Text>

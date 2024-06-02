@@ -22,7 +22,7 @@ const InicioSesion = ({ navigation }) => {
     };
 
     try {
-      const response = await fetch('http://10.48.70.212:8080/cliente/getDatosCliente', requestOptions);
+      const response = await fetch('http://192.168.0.22:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
       if (!response.ok) {
@@ -41,7 +41,7 @@ const InicioSesion = ({ navigation }) => {
           body: JSON.stringify({ idCliente }),
         };
         const response2 = await fetch(
-          "http://10.48.70.212:8080/cuenta/cuentas",
+          "http://192.168.0.22:8080/cuenta/cuentas",
           requestOptions2
         );
         const data2 = await response2.json();
@@ -57,7 +57,7 @@ const InicioSesion = ({ navigation }) => {
             body: JSON.stringify({ idCuenta: cuentas }),
           };
           const response3 = await fetch(
-            "http://10.48.70.212:8080/tarjeta/getTarjetasxCuenta",
+            "http://192.168.0.22:8080/tarjeta/getTarjetasxCuenta",
             requestOptions3
           );
           const data3 = await response3.json();
