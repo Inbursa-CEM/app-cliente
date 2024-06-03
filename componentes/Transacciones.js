@@ -7,7 +7,6 @@ const Transacciones = () => {
 
     const [transacciones, setTransacciones] = useState([]);
     const [cargando, setCargando] = useState(true);
-    const [mesSeleccionado, setMesSeleccionado] = useState("Enero");
     const navigation = useNavigation();
     const [idCliente, setIdCliente] = useState(null);
 
@@ -20,7 +19,7 @@ const Transacciones = () => {
                 body: info,
             };
             const response = await fetch(
-                "http://192.168.0.22:8080/transaccion/getTransacciones",
+                "http://192.168.0.17:8080/transaccion/getTransacciones",
                 requestOptions
             );
             const data = await response.json();
@@ -86,7 +85,7 @@ const Transacciones = () => {
                             key={index} 
                             style={[styles.transaccion, index !== transaccionesFormateadas.length -1 && styles.transaccionDivider]}
                             onPress={() => navigation.navigate('DetalleTransaccion', {transaccion: transaccion, idCliente: idCliente})}>
-                                <View>
+                                <View style={styles.transaccionInfo}>
                                     <Text style={styles.fechaTransaccion}>{transaccion.fecha}</Text>
                                     <Text style={styles.transaccionDescripcion}>{transaccion.descripcion}</Text>
                                 </View>
@@ -139,7 +138,11 @@ const styles = StyleSheet.create ({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 15,
-        paddingHorizontal: 20
+        paddingHorizontal: 18
+    },
+    transaccionInfo: {
+        flex: 1,
+        paddingRight: 10
     },
     transaccionDivider: {
         borderBottomWidth: 1,
@@ -155,19 +158,21 @@ const styles = StyleSheet.create ({
     },
     contenedorMonto: {
         flexDirection: 'column',
-        alignItems: 'center',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
         width: 130
     },
     montoTransaccion: {
         fontSize: 16,
-        marginLeft: 60,
+        textAlign: 'right',
         color: '#012148'
     },
     cantidad: {
         fontSize: 19,
         fontStyle: 'italic',
-        marginLeft: 60,
-        color: '#012148'
+        textAlign: 'right',
+        color: '#012148',
+        marginLeft: 5
     }
 });
 
