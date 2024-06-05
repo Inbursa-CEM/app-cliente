@@ -4,7 +4,8 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const PantallaPrincipal = () => {
+// Definición del componente funcional 'PantallaPrincipal'
+const PantallaPrincipal = () => { 
   const [nombre, setNombre] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [infotarjetas, setInfoTarjetas] = useState(null);
@@ -15,6 +16,7 @@ const PantallaPrincipal = () => {
   const [arrayTransacciones, setArrayTransacciones] = useState([]);
   const navigation = useNavigation();
 
+ // Función asíncrona para obtener los datos del cliente
   const fetchClienteData = async () => {
     try {
       const nombre = await AsyncStorage.getItem("nombre");
@@ -46,6 +48,7 @@ const PantallaPrincipal = () => {
     }
   };
 
+// Función asíncrona para descargar las transacciones de una cuenta
   const descargarTransacciones = async (numCuenta) => {
     try {
       const info = JSON.stringify({ numCuenta });
@@ -73,10 +76,11 @@ const PantallaPrincipal = () => {
     }
   };
 
+  // Hook useEffect para ejecutar código al montar el componente
   useEffect(() => {
     fetchClienteData();
   }, []);
-
+  // Hook useFocusEffect para ejecutar código al enfocar el componente
   useFocusEffect(
     useCallback(() => {
       if (tarjetaSeleccionada) {
@@ -85,18 +89,21 @@ const PantallaPrincipal = () => {
     }, [tarjetaSeleccionada])
   );
 
+  // Función para formatear la fecha de una transacción
   const formatearFecha = (fecha) => {
     const opciones = { year: "numeric", month: "long", day: "numeric" };
     const fechaNueva = new Date(fecha).toLocaleDateString("es-ES", opciones);
     return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
   };
 
+  // Formatear las transacciones para mostrarlas en la pantalla
   const transaccionesFormateadas = arrayTransacciones.map(t => ({
     fecha: formatearFecha(t[2].split("T")[0]),
     descripcion: t[0],
     monto: `$${t[4]}`,
   }));
 
+  // Función para manejar el evento de presionar una tarjeta
   const handlePress = async (i) => {
     setPopupVisible(false);
     setTarjetaSeleccionada(infotarjetas[0][i]);
@@ -111,6 +118,7 @@ const PantallaPrincipal = () => {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+  // Renderizado del componente
   return (
     <ImageBackground
       source={require("../assets/PantallaFondo.png")}
@@ -176,7 +184,7 @@ const PantallaPrincipal = () => {
               </TouchableOpacity>
             </View>
           </View>
-
+          
           <Modal
             animationType="slide"
             transparent={true}
@@ -203,6 +211,7 @@ const PantallaPrincipal = () => {
   );
 };
 
+// Definición de los estilos del componente
 const styles = StyleSheet.create({
   background: {
     flex: 1,

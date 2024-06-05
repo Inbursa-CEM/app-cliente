@@ -1,8 +1,10 @@
+// Objetivo: Mostrar las transacciones realizadas por el cliente
 import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { ImageBackground, StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Definición del componente funcional 'Transacciones'
 const Transacciones = () => {
 
     const [transacciones, setTransacciones] = useState([]);
@@ -10,6 +12,7 @@ const Transacciones = () => {
     const navigation = useNavigation();
     const [idCliente, setIdCliente] = useState(null);
 
+    // Función asíncrona para descargar las transacciones del cliente
     const descargarTransacciones = async (numCuenta) => {
         try {
             const info = JSON.stringify({ numCuenta });
@@ -37,6 +40,7 @@ const Transacciones = () => {
         }
     };
 
+    // Hook useEffect para ejecutar código al montar el componente
     useEffect(() => {
         const fetchTransacciones = async () => {
             const terminacion = await AsyncStorage.getItem("terminacion");
@@ -54,12 +58,14 @@ const Transacciones = () => {
         console.log("Transacciones:", transacciones);
     }, [transacciones]);
 
+    // Función para formatear la fecha de las transacciones
     const formatearFecha = (fecha) => {
         const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
         const fechaNueva = new Date(fecha).toLocaleDateString('es-ES', opciones);
         return fechaNueva.charAt(0).toUpperCase() + fechaNueva.slice(1);
     };
 
+    // Formateo de las transacciones para mostrarlas en la pantalla
     const transaccionesFormateadas = Array.isArray(transacciones) ? transacciones.map(t => ({
         fecha: formatearFecha(t.fecha.split('T')[0]),
         descripcion: t.detalle,
@@ -73,7 +79,7 @@ const Transacciones = () => {
     if (cargando) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
-
+    // Renderizado del componente
     return (
         <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
             <View style={styles.container}>
@@ -102,6 +108,7 @@ const Transacciones = () => {
     );
 };
 
+// Definición de estilos para los componentes usando StyleSheet.create
 const styles = StyleSheet.create ({
     background: {
         flex: 1,

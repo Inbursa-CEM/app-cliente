@@ -3,7 +3,9 @@ import { View, Text, TextInput, ImageBackground, StyleSheet, ActivityIndicator, 
 import Boton from "./Boton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Definición del componente funcional 'InicioSesion'
 const InicioSesion = ({ navigation }) => {
+  // Definición de estados locales con useState
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,10 +13,12 @@ const InicioSesion = ({ navigation }) => {
   const arrayValores = [1, 2, 3, 4, 5];
   const arrayTarjetas = [];
 
+  // Función para manejar el inicio de sesión
   const handleLogin = async () => {
-    setLoading(true);
-    setLoginError(null);
+    setLoading(true); // Mostrar indicador de carga
+    setLoginError(null); // Resetear error de inicio de sesión
     
+     // Opciones de la petición POST
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -22,6 +26,7 @@ const InicioSesion = ({ navigation }) => {
     };
 
     try {
+      // Envío de la petición POST para obtener datos del cliente
       const response = await fetch('http://192.168.0.17:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
@@ -29,6 +34,7 @@ const InicioSesion = ({ navigation }) => {
         throw new Error(data.error || 'Error al iniciar sesión');
       }
 
+      // Almacenamiento de datos del cliente en AsyncStorage
       await AsyncStorage.setItem('idCliente', data.idCliente.toString());
       await AsyncStorage.setItem('nombre', data.nombre);
       var idCliente = data.idCliente;
@@ -83,14 +89,15 @@ const InicioSesion = ({ navigation }) => {
 
       navigation.navigate('PantallaPrincipal');
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      Alert.alert('Error', error.message || 'Error al iniciar sesión');
-      setLoginError(error.message || 'Error al iniciar sesión');
+      console.error('Error al iniciar sesión:', error); // Manejo de errores de la petición
+      Alert.alert('Error', error.message || 'Error al iniciar sesión'); // Mostrar alerta de error
+      setLoginError(error.message || 'Error al iniciar sesión'); // Guardar mensaje de error
     } finally {
-      setLoading(false);
+      setLoading(false);  // Ocultar indicador de carga
     }
   };
 
+  // Retorno de la vista del componente
   return (
     <ImageBackground source={require('../assets/pantInicioSesion.png')} style={styles.background} resizeMode="cover">
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -115,6 +122,7 @@ const InicioSesion = ({ navigation }) => {
   );
 };
 
+// Definición de los estilos del componente
 const styles = StyleSheet.create({
   background: {
     flex: 1,

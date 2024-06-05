@@ -1,3 +1,4 @@
+// Uso del hook 'useRoute' para obtener los parámetros pasados a esta pantalla
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, Linking, ActivityIndicator } from "react-native";
@@ -12,7 +13,7 @@ const DetalleTransaccion = () => {
     const route = useRoute();
     const {transaccion} = route.params;
     const {idCliente} = route.params;
-
+    // Función asíncrona para levantar un reporte
     const levantarReporte = async () => {
         try {
             const info = JSON.stringify({ idCliente, idTransaccion: transaccion.idTransaccion });
@@ -21,15 +22,17 @@ const DetalleTransaccion = () => {
                 headers: { "Content-Type": "application/json" },
                 body: info,
             };
+            // Envío de la petición POST al servidor
             const response = await fetch(
                 "http://192.168.0.22:8080/reporte/postReporte",
                 requestOptions
             );
         } catch (error) {
+            // Manejo de errores en caso de que la petición falle
             console.error("Error al levantar reporte:", error);
         }
     }
-
+    // Función para realizar una llamada telefónica y levantar un reporte
     const llamar = () => {
         const folio = '123456'; { /* cambiar cuando recibamos info */}
         const num = 'tel:8006490590';
@@ -43,6 +46,7 @@ const DetalleTransaccion = () => {
 
 
     return (
+        // Imagen de fondo de la pantalla
         <ImageBackground source={require('../assets/PantallaFondo.png')} style={styles.background} resizeMode="cover">
             <View style={styles.container}>
                 <Text style={styles.titulo}>Detalles del Movimiento</Text>
@@ -78,6 +82,8 @@ const DetalleTransaccion = () => {
     );
 };
 
+
+// Definición de estilos para los componentes usando StyleSheet.create
 const styles = StyleSheet.create ({
     background: {
         flex: 1,
