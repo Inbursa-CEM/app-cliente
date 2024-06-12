@@ -27,7 +27,7 @@ const InicioSesion = ({ navigation }) => {
 
     try {
       // Envío de la petición POST para obtener datos del cliente
-      const response = await fetch('http://192.168.0.17:8080/cliente/getDatosCliente', requestOptions);
+      const response = await fetch('http://54.163.30.178:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
       if (!response.ok) {
@@ -47,7 +47,7 @@ const InicioSesion = ({ navigation }) => {
           body: JSON.stringify({ idCliente }),
         };
         const response2 = await fetch(
-          "http://192.168.0.17:8080/cuenta/cuentas",
+          "http://54.163.30.178:8080/cuenta/cuentas",
           requestOptions2
         );
         const data2 = await response2.json();
@@ -63,7 +63,7 @@ const InicioSesion = ({ navigation }) => {
             body: JSON.stringify({ idCuenta: cuentas }),
           };
           const response3 = await fetch(
-            "http://192.168.0.17:8080/tarjeta/getTarjetasxCuenta",
+            "http://54.163.30.178:8080/tarjeta/getTarjetasxCuenta",
             requestOptions3
           );
           const data3 = await response3.json();

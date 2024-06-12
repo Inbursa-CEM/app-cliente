@@ -24,7 +24,7 @@ const DetalleTransaccion = () => {
             };
             // Envío de la petición POST al servidor
             const response = await fetch(
-                "http://192.168.0.22:8080/reporte/postReporte",
+                "http://54.163.30.178:8080/reporte/postReporte",
                 requestOptions
             );
         } catch (error) {

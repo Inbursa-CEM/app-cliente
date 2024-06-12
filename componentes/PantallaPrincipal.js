@@ -58,7 +58,7 @@ const PantallaPrincipal = () => {
         body: info,
       };
       const response = await fetch(
-        "http://192.168.0.17:8080/transaccion/getTransacciones",
+        "http://54.163.30.178:8080/transaccion/getTransacciones",
         requestOptions
       );
       const data = await response.json();
