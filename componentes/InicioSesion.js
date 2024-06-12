@@ -81,7 +81,7 @@ const InicioSesion = ({ navigation }) => {
           await AsyncStorage.setItem('InfoTarjetas', JSON.stringify(arrayTarjetas));
       };
     }
-      //Intento para guardar array
+      // Guardar array usando AsyncStorage
       await AsyncStorage.setItem('arrayValores', JSON.stringify(arrayValores));
   
       console.log('Array guardado: ', arrayValores);

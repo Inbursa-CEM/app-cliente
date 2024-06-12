@@ -5,8 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import Transacciones from './componentes/Transacciones';
 import DetalleTransaccion from './componentes/DetalleTransaccion';
 
+// Creación de un stack navigator
 const Stack = createNativeStackNavigator()
 
+// Definir las pantallas y la forma en que se navega entre ellas
 export default function App() {
   return (
     <NavigationContainer>
