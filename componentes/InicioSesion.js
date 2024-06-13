@@ -1,3 +1,6 @@
+// Autores: Ares Ortiz Botello A01747848, Andrés Iván Rodríguez Méndez A01754650
+// Objetivo: Definir la logica y diseño de la pantalla de inicio de sesion a la aplicacion
+
 import React, { useState } from "react";
 import { View, Text, TextInput, ImageBackground, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import Boton from "./Boton";
@@ -27,7 +30,7 @@ const InicioSesion = ({ navigation }) => {
 
     try {
       // Envío de la petición POST para obtener datos del cliente
-      const response = await fetch('http://54.163.30.178:8080/cliente/getDatosCliente', requestOptions);
+      const response = await fetch('http://10.48.104.45:8080/cliente/getDatosCliente', requestOptions);
       const data = await response.json();
 
       if (!response.ok) {
@@ -47,7 +50,7 @@ const InicioSesion = ({ navigation }) => {
           body: JSON.stringify({ idCliente }),
         };
         const response2 = await fetch(
-          "http://54.163.30.178:8080/cuenta/cuentas",
+          "http://10.48.104.45:8080/cuenta/cuentas",
           requestOptions2
         );
         const data2 = await response2.json();
@@ -63,7 +66,7 @@ const InicioSesion = ({ navigation }) => {
             body: JSON.stringify({ idCuenta: cuentas }),
           };
           const response3 = await fetch(
-            "http://54.163.30.178:8080/tarjeta/getTarjetasxCuenta",
+            "http://10.48.104.45:8080/tarjeta/getTarjetasxCuenta",
             requestOptions3
           );
           const data3 = await response3.json();
@@ -99,14 +102,17 @@ const InicioSesion = ({ navigation }) => {
 
   // Retorno de la vista del componente
   return (
+    //Componente para establecer la imagen de fondo
     <ImageBackground source={require('../assets/pantInicioSesion.png')} style={styles.background} resizeMode="cover">
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {/* Campo de entrada para el correo electrónico */}
         <TextInput
           placeholder="Correo electrónico"
           value={email}
           onChangeText={(text) => setEmail(text)}
           style={styles.inputCorreo}
         />
+        {/* Campo de entrada para la contraseña */}
         <TextInput
           placeholder="Contraseña"
           value={password}
@@ -114,6 +120,7 @@ const InicioSesion = ({ navigation }) => {
           secureTextEntry={true}
           style={styles.inputPassword}
         />
+        {/* Botón para iniciar sesión */}
         <Boton title="Iniciar sesión" onPress={handleLogin} />
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
         {loginError && <Text style={styles.error}>{loginError}</Text>}
@@ -124,17 +131,20 @@ const InicioSesion = ({ navigation }) => {
 
 // Definición de los estilos del componente
 const styles = StyleSheet.create({
+  // Estilo para la imagen de fondo
   background: {
     flex: 1,
     width: '100%',
     height: '100%',
     justifyContent: 'center',
   },
+  // Estilo para el contenedor principal
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // Estilo para el campo de entrada del correo electrónico
   inputCorreo: {
     padding: 10,
     marginBottom: 30,
@@ -144,6 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20, 
   },
+  // Estilo para el campo de entrada de la contraseña
   inputPassword: {
     padding: 10,
     marginBottom: 40,
@@ -153,6 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
   },
+  // Estilo para el mensaje de error
   error: {
     color: 'red',
     marginTop: 10,

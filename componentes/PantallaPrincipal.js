@@ -1,3 +1,6 @@
+// Autores: Ares Ortiz Botello A01747848, Andrés Iván Rodríguez Méndez A01754650
+// Objetivo: Mostrar los datos bancarios del cliente (tarjetas, cuentas asociadas, saldo, transacciones recientes)
+
 import React, { useEffect, useState, useCallback } from "react";
 import {StyleSheet, View, ImageBackground, Text, Image, Modal, TouchableOpacity, ScrollView, ActivityIndicator,} from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -58,7 +61,7 @@ const PantallaPrincipal = () => {
         body: info,
       };
       const response = await fetch(
-        "http://54.163.30.178:8080/transaccion/getTransacciones",
+        "http://10.48.104.45:8080/transaccion/getTransacciones",
         requestOptions
       );
       const data = await response.json();
@@ -134,6 +137,7 @@ const PantallaPrincipal = () => {
                 <Text style={[styles.titulo, styles.bold, styles.center]}>
                   Mis tarjetas
                 </Text>
+                {/* Botón para mostrar el modal con las tarjetas */}
                 <TouchableOpacity onPress={() => setPopupVisible(true)}>
                   <Image
                     source={require("../assets/tarjeta.png")}
@@ -142,6 +146,7 @@ const PantallaPrincipal = () => {
                 </TouchableOpacity>
               </View>
 
+              {/* Mostrar la información de la cuenta bancaria si está disponible */}
               {infotarjetas && infotarjetas.length === 2 && (
                 <View style={[styles.subContainer, styles.border]}>
                   <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
@@ -160,6 +165,7 @@ const PantallaPrincipal = () => {
                 </View>
               )}
 
+              {/* Botón para navegar a la pantalla de transacciones más recientes */}
               <TouchableOpacity onPress={() => navigation.navigate("Transacciones")}>
                 <View style={[styles.subContainer, styles.border]}>
                   <Text style={[styles.titulo, styles.bold, { color: "#012148" }]}>
@@ -185,6 +191,7 @@ const PantallaPrincipal = () => {
             </View>
           </View>
           
+          {/* Modal para seleccionar una tarjeta */}
           <Modal
             animationType="slide"
             transparent={true}
@@ -196,6 +203,7 @@ const PantallaPrincipal = () => {
                 <Text style={[styles.titulo, styles.bold, styles.center]}>
                   Tarjetas
                 </Text>
+                  {/* Listado de tarjetas */}
                   {infotarjetas[0].map((_, i) => (
                     <TouchableOpacity key={i} onPress={() => handlePress(i)}>
                       <Text style={styles.text}>{infotarjetas[0][i]}</Text>
@@ -213,83 +221,101 @@ const PantallaPrincipal = () => {
 
 // Definición de los estilos del componente
 const styles = StyleSheet.create({
+  // Estilo para la imagen de fondo
   background: {
     flex: 1,
     width: "100%",
     height: "100%",
     justifyContent: "center",
   },
+  // Estilo para el contenedor
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  // Estilo para el contenedor principal
   contenedorPrincipal: {
     width: "90%",
     marginTop: 22,
   },
+  // Estilo para el subcontenedor
   subContainer: {
     backgroundColor: "rgba(217, 217, 217, 0.42)",
     borderRadius: 10,
     padding: 18,
     marginBottom: 18,
   },
+  // Estilo para el nombre de usuario
   usuario: {
     fontSize: 19,
     color: "#012148",
     marginTop: 188,
   },
+  // Estilo para el centrado de componentes
   center: {
     textAlign: "center",
     color: "#012148",
   },
+  // Estilo para el titulo
   titulo: {
     fontSize: 20,
   },
+  // Estilo para el texto
   text: {
     fontSize: 17,
     marginTop: 6,
   },
+  // Estilo para el texto mediano
   textMediano: {
     fontSize: 17,
     color: "#235894",
     marginTop: 6,
   },
+  // Estilo para el texto del saldo de la cuenta 
   textCantidadCuenta: {
     fontSize: 16,
     fontStyle: "italic",
   },
+  // Estilo para el texto de descripcion de transaccion
   textDescripcion: {
     fontSize: 14,
     color: "#235894",
   },
+  // Estilo para el texto del tituo de transaccion
   textTransaccion: {
     fontSize: 20,
     fontStyle: "italic",
   },
+  // Estilo para poder usar negritas
   bold: {
     fontWeight: "bold",
   },
+  // Estilo para alinear a la derecha
   right: {
     textAlign: "right",
   },
+  // Estilo para la imagen de tarjetas
   image: {
     width: 203,
     height: 135,
     alignSelf: "center",
     marginTop: 10,
   },
+  // Estilo para el display de transacciones
   transaccion: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  // Estilo para el contenedor del modal
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.6)"
   },
+  // Estilo para el contenido del modal
   modalContent: {
     backgroundColor: "#D9D9D9",
     padding: 20,
@@ -297,10 +323,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     maxHeight: "80%",
   },
+  // Estilo del scroll en pantalla
   scrollView: {
     flexGrow: 1,
     justifyContent: "center",
   },
+  // Estilo de bordes
   border: {
     borderWidth: 1,
     borderColor: "gray",

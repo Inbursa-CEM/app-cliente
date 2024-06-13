@@ -1,3 +1,6 @@
+// Autor: Andrés Iván Rodríguez Méndez A01754650
+// Objetivo: Crear un boton para el inicio de sesion
+
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 

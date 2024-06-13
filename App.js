@@ -1,3 +1,6 @@
+//Autor: Ares Ortiz Botello AO1747848
+// Objetivo: Establecer las pantallas que se usaran al llamar a navigation.navigate
+
 import InicioSesion from './componentes/InicioSesion';
 import PantallaPrincipal from './componentes/PantallaPrincipal';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

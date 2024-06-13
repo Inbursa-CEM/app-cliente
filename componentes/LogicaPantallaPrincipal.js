@@ -1,7 +1,8 @@
+// Autor: Andrés Iván Rodríguez Méndez A01754650
+// Objetivo: Definir la conexion con el back para la pantalla principal
+
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { View, Text } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from '../api';
 
 // Creación del contexto de la aplicación
 const LogicaPantallaPrincipal = () => {
@@ -18,7 +19,7 @@ const LogicaPantallaPrincipal = () => {
             })
         };
         // Petición POST al servidor
-        fetch("https://localhost:8080/cliente/cargarCuentas", requestOptions)
+        fetch("https://10.48.104.45:8080/cliente/cargarCuentas", requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 console.log(data); // Mostrar datos en consola
@@ -32,7 +33,6 @@ const LogicaPantallaPrincipal = () => {
 
         </View>
     )
-
 }; 
 
 export default LogicaPantallaPrincipal;
